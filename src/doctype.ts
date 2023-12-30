@@ -1,0 +1,40 @@
+import {
+  DocType,
+  createDocHooks,
+  serializeMutationAsJSON,
+} from "@orbitinghail/sqlsync-solid-js";
+
+const REDUCER_URL = new URL(
+  "../../reducer/target/wasm32-unknown-unknown/release/reducer.wasm",
+  import.meta.url
+);
+
+// matches the Mutation type in demo/demo-reducer
+export type Mutation =
+  | {
+      tag: "InitSchema";
+    }
+  | {
+      tag: "CreateTask";
+      id: string;
+      description: string;
+    }
+  | {
+      tag: "DeleteTask";
+      id: string;
+    }
+  | {
+      tag: "ToggleCompleted";
+      id: string;
+    };
+
+export const TaskDocType: DocType<Mutation> = {
+  reducerUrl: REDUCER_URL,
+  serializeMutation: serializeMutationAsJSON,
+};
+
+console.log("TaskDocType", TaskDocType);
+
+export const { useMutate, useQuery, useSetConnectionEnabled } = createDocHooks(
+  () => TaskDocType
+);
