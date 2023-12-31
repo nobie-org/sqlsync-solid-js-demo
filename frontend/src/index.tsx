@@ -60,10 +60,6 @@ const newDocumentId = async (name = "") => {
   return journalIdFromString(await response.text());
 };
 
-export const SQLSyncContextLocal = createContext<[Accessor<SQLSync | null>]>([
-  () => null,
-]);
-
 interface Props {
   workerUrl: string | URL;
   wasmUrl: string | URL;
@@ -74,36 +70,10 @@ export const createSqlSync = (props: Props): SQLSync => {
   return new SQLSync(props.workerUrl, props.wasmUrl, props.coordinatorUrl);
 };
 
-const LocalSqlSyncContext = createContext<[() => SQLSync | null]>([() => null]);
-
-export const SQLSyncProviderLocal: ParentComponent<Props> = (props) => {
-  const [sqlSync, setSQLSync] = createSignal<SQLSync | null>(
-    createSqlSync(props)
-  );
-  // console.log("sqlSync in provider:", sqlSync(), JSON.stringify(sqlSync(), null, 2));
-
-  // const sqlSyncValue: [Accessor<SQLSync | null>] = [sqlSync];
-
-  // createEffect(() => {
-  //   const sqlSync = createSqlSync(props);
-  //   console.log("sqlSync in effect:", sqlSync, JSON.stringify(sqlSync, null, 2));
-  //   setSQLSync(sqlSync);
-  //   onCleanup(() => {
-  //     sqlSync.close();
-  //   });
-  // });
-
-  return (
-    <LocalSqlSyncContext.Provider value={[() => createSqlSync(props)]}>
-      {props.children}
-    </LocalSqlSyncContext.Provider>
-  );
-};
-
 export const DocRoute = () => {
   const myContext = useMYContext();
   console.log("DocRoute: myContext", myContext, myContext?.[0]());
-  const x = useSqlContextLocal();
+  const x = useMyContext2();
   console.log("DocRoute: x", x);
   // const sqlSync = useSQLSync();
   // console.log("DocRoute: sqlSync", sqlSync);
@@ -119,48 +89,16 @@ export const DocRoute = () => {
   }
 };
 
-// const router = [
-//   {
-//     path: "/",
-//     loader: async () => {
-//       const docId = await newDocumentId();
-//       return redirect("/" + journalIdToString(docId));
-//     },
-//   },
-//   {
-//     path: "/named/:name",
-//     loader: async ({ params }) => {
-//       const docId = await newDocumentId(params.name);
-//       return redirect("/" + journalIdToString(docId));
-//     },
-//   },
-//   {
-//     path: "/:docId",
-//     element: <DocRoute />,
-//   },
-// ];
-
-const useSqlContextLocal = () => {
-  const sqlContext = useContext(SQLSyncContextLocal);
-  console.log("sqlContext", sqlContext);
-  return sqlContext;
-};
-
 const Main: Component = () => {
   const navigate = useNavigate();
   const [num, setNum] = useMYContext()!;
+  console.log("Main: num", num());
   setNum(1909);
-  const sqlContext = useSqlContextLocal();
-  // const sqlSync = useSQLSync();
-  // console.log("sqlSync", sqlSync);
-  // console.log("sqlContext", sqlContext[0]()?.connectionStatus);
-  // console.log("myContext", num);
-
-  // console.log("Main: sqlSyncContext id", SQLSyncContext.id.toString());
-  // const newSqlSync = useContext(SQLSyncContext);
-  // console.log("newSqlSync", newSqlSync);
-
-  // const sqlSync = ();
+  console.log("Main: num", num());
+  const [sync, setSync] = useMyContext2()!;
+  // setSync(1909);
+  console.log("Main: num", num());
+  console.log("Main: sync", sync());
 
   createEffect(async () => {
     const docId = await newDocumentId();
@@ -174,7 +112,13 @@ const Main: Component = () => {
   return <div>Redirecting</div>;
 };
 
+// const LocalSqlSyncContext =
+//   createContext<[() => number, (number: number) => void]>();
+
 const MyContext = createContext<[() => number, (number: number) => void]>();
+
+export const MyContext2 =
+  createContext<[() => SQLSync, (num: SQLSync) => void]>();
 
 const MyCustomProvider: ParentComponent = (props) => {
   const [state, setState] = createSignal(0);
@@ -186,27 +130,47 @@ const MyCustomProvider: ParentComponent = (props) => {
   );
 };
 
-const useMYContext = ():
-  | [() => number, (number: number) => void]
-  | undefined => {
+interface MyContext2Props {
+  workerUrl: string | URL;
+  wasmUrl: string | URL;
+  coordinatorUrl?: string | URL;
+}
+
+const MyContext2Provider: ParentComponent<MyContext2Props> = (props) => {
+  const [state, setState] = createSignal(createSqlSync(props));
+
+  return (
+    <MyContext2.Provider value={[state, setState]}>
+      {props.children}
+    </MyContext2.Provider>
+  );
+};
+
+const useMYContext = () => {
   const state = useContext(MyContext);
   return state;
 };
 
+const useMyContext2 = () => {
+  const sqlContext = useContext(MyContext2);
+  console.log("useMyContext2: sqlContext", sqlContext);
+  return sqlContext;
+};
+
 render(
   () => (
-    <SQLSyncProviderLocal
-      wasmUrl={sqlSyncWasmUrl}
-      workerUrl={workerUrl}
-      coordinatorUrl={COORDINATOR_URL_WS}
-    >
-      <MyCustomProvider>
+    <MyCustomProvider>
+      <MyContext2Provider
+        wasmUrl={sqlSyncWasmUrl}
+        workerUrl={workerUrl}
+        coordinatorUrl={COORDINATOR_URL_WS}
+      >
         <Router>
           <Route path="/" component={Main} />
           <Route path="/:docId" component={DocRoute} />
         </Router>
-      </MyCustomProvider>
-    </SQLSyncProviderLocal>
+      </MyContext2Provider>
+    </MyCustomProvider>
   ),
   root!
 );
