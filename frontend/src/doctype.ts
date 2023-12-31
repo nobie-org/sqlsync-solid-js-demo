@@ -35,6 +35,6 @@ export const TaskDocType: DocType<Mutation> = {
 
 console.log("TaskDocType", TaskDocType);
 
-export const { useMutate, useQuery, useSetConnectionEnabled } = createDocHooks(
-  () => TaskDocType
-);
+// export const { useMutate, useQuery, useSetConnectionEnabled } = createDocHooks(
+//   () => TaskDocType
+// );
