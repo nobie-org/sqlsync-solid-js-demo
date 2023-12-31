@@ -16,7 +16,7 @@ import {
 } from "@solidjs/router";
 import {
   SQLSync,
-  SQLSyncContext,
+  // SQLSyncContext,
   SQLSyncProvider,
   createDocHooks,
   useSQLSync,
@@ -74,8 +74,12 @@ export const createSqlSync = (props: Props): SQLSync => {
   return new SQLSync(props.workerUrl, props.wasmUrl, props.coordinatorUrl);
 };
 
+const LocalSqlSyncContext = createContext<[() => SQLSync | null]>([() => null]);
+
 export const SQLSyncProviderLocal: ParentComponent<Props> = (props) => {
-  // const [sqlSync, setSQLSync] = createSignal<SQLSync | null>(createSqlSync(props));
+  const [sqlSync, setSQLSync] = createSignal<SQLSync | null>(
+    createSqlSync(props)
+  );
   // console.log("sqlSync in provider:", sqlSync(), JSON.stringify(sqlSync(), null, 2));
 
   // const sqlSyncValue: [Accessor<SQLSync | null>] = [sqlSync];
@@ -90,9 +94,9 @@ export const SQLSyncProviderLocal: ParentComponent<Props> = (props) => {
   // });
 
   return (
-    <SQLSyncContext.Provider value={[() => createSqlSync(props)]}>
+    <LocalSqlSyncContext.Provider value={[() => createSqlSync(props)]}>
       {props.children}
-    </SQLSyncContext.Provider>
+    </LocalSqlSyncContext.Provider>
   );
 };
 
@@ -137,7 +141,7 @@ export const DocRoute = () => {
 // ];
 
 const useSqlContextLocal = () => {
-  const sqlContext = useContext(SQLSyncContext);
+  const sqlContext = useContext(SQLSyncContextLocal);
   console.log("sqlContext", sqlContext);
   return sqlContext;
 };
