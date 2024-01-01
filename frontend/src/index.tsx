@@ -7,18 +7,11 @@ import {
   journalIdFromString,
   journalIdToString,
 } from "@orbitinghail/sqlsync-worker";
-import {
-  Route,
-  Router,
-  redirect,
-  useNavigate,
-  useParams,
-} from "@solidjs/router";
+import { Route, Router, useNavigate, useParams } from "@solidjs/router";
 import {
   SQLSync,
   SQLSyncContext,
   SQLSyncProvider,
-  createDocHooks,
   useSQLSync,
   useSqlContext,
   createSignal as useSignal,
@@ -34,7 +27,6 @@ import {
   ParentComponent,
   createSignal,
   useContext,
-  Accessor,
 } from "solid-js";
 
 const root = document.getElementById("root");
@@ -94,8 +86,8 @@ export const DocRoute = () => {
 
 const Main: Component = () => {
   console.log("signal compare", useSignal === createSignal);
-  console.log(useSignal);
-  console.log(createSignal);
+  console.log("createSignal exported", useSignal);
+  console.log("createSignal og", createSignal);
   const navigate = useNavigate();
   const [num, setNum] = useMYContext()!;
   console.log("Main: num", num());
