@@ -19,7 +19,6 @@ const App = (props: AppProps) => {
   const mutate = useMutate(props.docId);
 
   createEffect(() => {
-    const id = props.docId;
     console.log("init schema");
     mutate({ tag: "InitSchema" })
       .then(() => {
