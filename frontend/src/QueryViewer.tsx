@@ -10,6 +10,7 @@ import {
 } from "solid-js";
 import Highlight from "solid-highlight";
 import { Collapse } from "solid-collapse";
+import { create } from "domain";
 
 interface Props {
   docId: JournalId;
@@ -18,6 +19,10 @@ interface Props {
 export const QueryViewerInner: Component<Props> = (props) => {
   const [inputValue, setInputValue] = createSignal("select * from tasks");
   const result = useQuery(() => props.docId, inputValue);
+
+  createEffect(() => {
+    console.log("inputValue", inputValue());
+  });
 
   const rowsJson = createMemo(() => {
     return JSON.stringify(
@@ -41,18 +46,23 @@ export const QueryViewerInner: Component<Props> = (props) => {
   createEffect(() => {
     const resultValue = result();
     if (resultValue.state === "error") {
-      alert(resultValue.error.message);
+      console.error("Query error", resultValue.error);
     }
   });
+
+  const stringifiedJson = () => JSON.stringify(rowsJson(), null, 2);
 
   return (
     <>
       <textarea
         value={inputValue()}
         class="font-mono"
+        onInput={(e) => setInputValue(e.currentTarget.value)}
         onChange={(e) => setInputValue(e.currentTarget.value)}
       />
-      {/* <Highlight language="json">{JSON.stringify(rowsJson())} </Highlight> */}
+      <Highlight class="text-left" language="json">
+        {rowsJson()}
+      </Highlight>
     </>
   );
 };

@@ -34,7 +34,11 @@ const Input: Component<InputProps> = (props) => {
 export const TaskForm = ({ mutate }: TaskFormProps) => {
   const [inputValue, setInputValue] = createSignal("");
 
-  const handleSubmit = async () => {
+  const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = async (
+    e
+  ) => {
+    e.preventDefault();
+
     if (inputValue().trim().length === 0) {
       alert("Please enter a task with a non-empty description");
       return;
@@ -69,7 +73,9 @@ export const TaskForm = ({ mutate }: TaskFormProps) => {
           value={inputValue()}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <button type="submit">Add</button>
+        <button onSubmit={(e) => e.preventDefault()} type="submit">
+          Add
+        </button>
       </div>
     </form>
   );
