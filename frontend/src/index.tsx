@@ -8,26 +8,12 @@ import {
   journalIdToString,
 } from "@orbitinghail/sqlsync-worker";
 import { Route, Router, useNavigate, useParams } from "@solidjs/router";
-import {
-  SQLSync,
-  SQLSyncContext,
-  SQLSyncProvider,
-  useSQLSync,
-  useSqlContext,
-  createSignal as useSignal,
-} from "@orbitinghail/sqlsync-solid-js";
+import { SQLSyncProvider } from "@orbitinghail/sqlsync-solid-js";
 
 import workerUrl from "@orbitinghail/sqlsync-worker/worker.js?url";
 
 import sqlSyncWasmUrl from "@orbitinghail/sqlsync-worker/sqlsync.wasm?url";
-import {
-  createEffect,
-  Component,
-  createContext,
-  ParentComponent,
-  createSignal,
-  useContext,
-} from "solid-js";
+import { createEffect, Component } from "solid-js";
 
 const root = document.getElementById("root");
 
@@ -51,16 +37,6 @@ const newDocumentId = async (name = "") => {
   });
 
   return journalIdFromString(await response.text());
-};
-
-interface Props {
-  workerUrl: string | URL;
-  wasmUrl: string | URL;
-  coordinatorUrl?: string | URL;
-}
-
-export const createSqlSync = (props: Props): SQLSync => {
-  return new SQLSync(props.workerUrl, props.wasmUrl, props.coordinatorUrl);
 };
 
 export const DocRoute = () => {

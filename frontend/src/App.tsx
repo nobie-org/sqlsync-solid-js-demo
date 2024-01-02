@@ -1,9 +1,6 @@
-import { createEffect, createSignal } from "solid-js";
-import solidLogo from "./assets/solid.svg";
-import viteLogo from "/vite.svg";
+import { createEffect } from "solid-js";
 import "./App.css";
 import { JournalId } from "@orbitinghail/sqlsync-worker";
-import { useSQLSync } from "@orbitinghail/sqlsync-solid-js";
 import { useMutate } from "./doctype";
 import { TaskList } from "./TaskList";
 import { QueryViewer } from "./QueryViewer";
@@ -31,7 +28,6 @@ const App = (props: AppProps) => {
   return (
     <div class="flex flex-col">
       <TaskList docId={props.docId} />
-
       <QueryViewer docId={props.docId} />
     </div>
   );
