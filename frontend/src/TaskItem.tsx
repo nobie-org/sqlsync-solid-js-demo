@@ -28,14 +28,15 @@ export const TaskItem: Component<Props> = (props) => {
   };
 
   return (
-    <div class="flex">
+    <div class="flex w-full items-center">
       <input
+        class="mr-2"
         type="checkbox"
         checked={task().completed}
         onChange={handleToggleCompleted}
       />
       <div>{task().description}</div>
-      <ActionIcon color="red" onClick={handleDelete}>
+      <ActionIcon class="ml-auto" color="red" onClick={handleDelete}>
         <IconX />
       </ActionIcon>
     </div>
@@ -43,16 +44,7 @@ export const TaskItem: Component<Props> = (props) => {
 };
 
 const ActionIcon = (props: JSX.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <button
-    {...props}
-    style={{
-      border: "none",
-      background: "none",
-      cursor: "pointer",
-      padding: 0,
-      margin: 0,
-    }}
-  />
+  <button {...props} />
 );
 
 const IconX = () => (

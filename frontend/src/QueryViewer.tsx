@@ -1,6 +1,6 @@
 import { JournalId } from "@orbitinghail/sqlsync-worker";
 import { useQuery } from "./doctype";
-import "highlight.js/styles/stackoverflow-light.css";
+import "highlight.js/styles/atom-one-dark.css";
 import {
   Component,
   createEffect,
@@ -10,7 +10,6 @@ import {
 } from "solid-js";
 import Highlight from "solid-highlight";
 import { Collapse } from "solid-collapse";
-import { create } from "domain";
 
 interface Props {
   docId: JournalId;
@@ -50,17 +49,19 @@ export const QueryViewerInner: Component<Props> = (props) => {
     }
   });
 
-  const stringifiedJson = () => JSON.stringify(rowsJson(), null, 2);
-
   return (
     <>
       <textarea
         value={inputValue()}
-        class="font-mono"
+        class="font-mono w-full mb-2 p-4"
         onInput={(e) => setInputValue(e.currentTarget.value)}
         onChange={(e) => setInputValue(e.currentTarget.value)}
       />
-      <Highlight class="text-left" language="json">
+      <Highlight
+        autoDetect
+        class="text-left text-sm rounded w-full"
+        language="json"
+      >
         {rowsJson()}
       </Highlight>
     </>
@@ -68,7 +69,7 @@ export const QueryViewerInner: Component<Props> = (props) => {
 };
 
 export const QueryViewer = (props: Props) => {
-  const [visible, setVisible] = createSignal(false);
+  const [visible, setVisible] = createSignal(true);
 
   const toggle = () => {
     setVisible((p) => !p);

@@ -20,8 +20,8 @@ export const TaskList = (props: Props) => {
   const mutate = useMutate(props.docId);
 
   return (
-    <div class="flex flex-col">
-      <div>
+    <div class="flex flex-col gap-2 mb-6">
+      <div class="flex items-center justify-between">
         <div>Tasks</div>
         <ConnectionStatus docId={props.docId} />
       </div>

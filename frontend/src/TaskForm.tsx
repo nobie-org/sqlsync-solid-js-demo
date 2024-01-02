@@ -18,13 +18,16 @@ interface InputProps {
 const Input: Component<InputProps> = (props) => {
   return (
     <>
-      <label for={props.name}>{props.label}</label>
+      <label class="flex-shrink-0" for={props.name}>
+        {props.label}
+      </label>
       <input
         required
         name={props.name}
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
+        class="w-full rounded p-2"
       />
       <span>{props.error}</span>
     </>
@@ -64,19 +67,21 @@ export const TaskForm = ({ mutate }: TaskFormProps) => {
 
   return (
     // @ts-ignore
-    <form onSubmit={handleSubmit}>
-      <div class="gap-2">
-        <Input
-          placeholder="Add a task"
-          name="task"
-          label="task"
-          value={inputValue()}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        <button onSubmit={(e) => e.preventDefault()} type="submit">
-          Add
-        </button>
-      </div>
+    <form onSubmit={handleSubmit} class="w-full gap-2 flex items-center">
+      <Input
+        placeholder="Add a task"
+        name="task"
+        label="New Task"
+        value={inputValue()}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <button
+        onSubmit={(e) => e.preventDefault()}
+        type="submit"
+        class="ml-auto"
+      >
+        Add
+      </button>
     </form>
   );
 };
